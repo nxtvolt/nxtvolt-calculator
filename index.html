@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NXT VOLT SolarCalc</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7f5;
+    color: #18342d;
+}
+
+header {
+    background: #123c32;
+    color: white;
+    padding: 24px 20px;
+}
+
+.header-inner {
+    max-width: 1100px;
+    margin: auto;
+}
+
+header h1 {
+    font-size: 28px;
+}
+
+header p {
+    margin-top: 6px;
+    color: #d7e5e0;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 16px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #dce5e1;
+}
+
+.card h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd7d2;
+    border-radius: 9px;
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.mode-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.mode-buttons button {
+    flex: 1;
+    padding: 11px;
+    border-radius: 8px;
+    border: 1px solid #123c32;
+    background: white;
+    color: #123c32;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.mode-buttons button.active {
+    background: #123c32;
+    color: white;
+}
+
+.results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.result {
+    background: #f4f7f5;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.result .label {
+    font-size: 13px;
+    color: #667b74;
+}
+
+.result .value {
+    font-size: 23px;
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+.highlight {
+    background: #123c32;
+    color: white;
+    padding: 20px;
+    border-radius: 14px;
+    margin-bottom: 15px;
+}
+
+.highlight .big {
+    font-size: 34px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.note {
+    margin-top: 18px;
+    padding: 14px;
+    background: #fff8dd;
+    border-radius: 9px;
+    color: #665719;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.quick {
+    margin-top: 24px;
+}
+
+.quick-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 12px;
+}
+
+.quick-item {
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid #dce5e1;
+}
+
+.quick-item span {
+    display: block;
+    font-size: 13px;
+    color: #667b74;
+    margin-bottom: 6px;
+}
+
+.quick-item strong {
+    font-size: 18px;
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    color: #71827c;
+    font-size: 13px;
+}
+
+.hidden {
+    display: none;
+}
+
+@media(max-width:750px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .results {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .quick-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="header-inner">
+    <h1>NXT VOLT SolarCalc</h1>
+    <p>BIPV sizing, generation & ROI calculator</p>
+</div>
+</header>
+
+<div class="container">
+
+<div class="grid">
+
+<!-- INPUTS -->
+
+<div class="card">
+
+<h2>Project Inputs</h2>
+
+<div class="mode-buttons">
+<button id="kwButton" class="active" onclick="setMode('kw')">
+I know target kW
+</button>
+
+<button id="areaButton" onclick="setMode('area')">
+I know available area
+</button>
+</div>
+
+<div id="kwInput">
+<label>Target System Size (kWp)</label>
+<input id="targetKW" type="number" value="5" step="0.1">
+</div>
+
+<div id="areaInput" class="hidden">
+<label>Available BIPV Area (sqft)</label>
+<input id="availableArea" type="number" value="500">
+</div>
+
+<div class="row">
+
+<div>
+<label>Panel Power (Wp)</label>
+<input id="panelPower" type="number" value="400">
+</div>
+
+<div>
+<label>Power Density (W/m²)</label>
+<input id="powerDensity" type="number" value="200">
+</div>
+
+</div>
+
+<h2 style="margin-top:10px;">Panel Size</h2>
+
+<div class="row">
+
+<div>
+<label>Length (mm)</label>
+<input id="panelLength" type="number" value="1800">
+</div>
+
+<div>
+<label>Width (mm)</label>
+<input id="panelWidth" type="number" value="1200">
+</div>
+
+</div>
+
+<label>Application / Orientation</label>
+
+<select id="orientation">
+<option value="2.65">
+South Vertical Façade — 2.65 units/kWp/day
+</option>
+
+<option value="2">
+East / West Vertical — 2.0 units/kWp/day
+</option>
+
+<option value="4">
+Pergola / Skylight — 4.0 units/kWp/day
+</option>
+
+<option value="custom">
+Custom
+</option>
+</select>
+
+<div id="customGenerationBox" class="hidden">
+
+<label>Custom Generation (units/kWp/day)</label>
+<input id="customGeneration" type="number" value="2.5" step="0.1">
+
+</div>
+
+<div class="row">
+
+<div>
+<label>Electricity Rate (₹/unit)</label>
+<input id="electricityRate" type="number" value="10" step="0.1">
+</div>
+
+<div>
+<label>Total Project Cost (₹)</label>
+<input id="projectCost" type="number" value="800000">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- RESULTS -->
+
+<div class="card">
+
+<h2>System Results</h2>
+
+<div class="highlight">
+
+<div>Installed System Capacity</div>
+
+<div class="big" id="installedKW">
+0 kWp
+</div>
+
+<div id="capacityNote"></div>
+
+</div>
+
+<div class="results">
+
+<div class="result">
+<div class="label">Panels Required</div>
+<div class="value" id="panelCount">0</div>
+</div>
+
+<div class="result">
+<div class="label">Active BIPV Area</div>
+<div class="value" id="activeArea">0 sqft</div>
+</div>
+
+<div class="result">
+<div class="label">Daily Generation</div>
+<div class="value" id="dailyGeneration">0</div>
+</div>
+
+<div class="result">
+<div class="label">Annual Generation</div>
+<div class="value" id="annualGeneration">0</div>
+</div>
+
+<div class="result">
+<div class="label">Annual Savings</div>
+<div class="value" id="annualSavings">₹0</div>
+</div>
+
+<div class="result">
+<div class="label">Simple Payback</div>
+<div class="value" id="payback">0 years</div>
+</div>
+
+</div>
+
+<div class="note">
+
+<strong>Preliminary Estimate</strong><br><br>
+
+Actual BIPV capacity and generation depend on usable façade area,
+orientation, shading, module colour, transparency, cell layout,
+electrical design and site conditions.
+
+Final engineering should be completed before committing generation
+or ROI figures to the customer.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- QUICK REFERENCE -->
+
+<div class="quick">
+
+<div class="card">
+
+<h2>Quick Reference</h2>
+
+<div class="quick-grid">
+
+<div class="quick-item">
+<span>Area per panel</span>
+<strong id="panelAreaRef">—</strong>
+</div>
+
+<div class="quick-item">
+<span>Area required for 1 kWp</span>
+<strong id="kwAreaRef">—</strong>
+</div>
+
+<div class="quick-item">
+<span>Selected panel</span>
+<strong id="panelPowerRef">—</strong>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<footer>
+
+NXT VOLT • BIPV Solar Calculator<br>
+For preliminary project assessment only.
+
+</footer>
+
+
+<script>
+
+let mode = "kw";
+
+function setMode(selectedMode) {
+
+    mode = selectedMode;
+
+    const kwButton = document.getElementById("kwButton");
+    const areaButton = document.getElementById("areaButton");
+
+    const kwInput = document.getElementById("kwInput");
+    const areaInput = document.getElementById("areaInput");
+
+    if(mode === "kw") {
+
+        kwButton.classList.add("active");
+        areaButton.classList.remove("active");
+
+        kwInput.classList.remove("hidden");
+        areaInput.classList.add("hidden");
+
+    } else {
+
+        areaButton.classList.add("active");
+        kwButton.classList.remove("active");
+
+        areaInput.classList.remove("hidden");
+        kwInput.classList.add("hidden");
+
+    }
+
+    calculate();
+
+}
+
+
+function number(id) {
+
+    const value = parseFloat(
+        document.getElementById(id).value
+    );
+
+    if(isNaN(value)) {
+        return 0;
+    }
+
+    return value;
+
+}
+
+
+function formatNumber(value, decimals = 1) {
+
+    return value.toLocaleString(
+        "en-IN",
+        {
+            maximumFractionDigits: decimals
+        }
+    );
+
+}
+
+
+function calculate() {
+
+    const targetKW = number("targetKW");
+
+    const availableArea =
+        number("availableArea");
+
+    const panelPower =
+        number("panelPower");
+
+    const powerDensity =
+        number("powerDensity");
+
+    const panelLength =
+        number("panelLength") / 1000;
+
+    const panelWidth =
+        number("panelWidth") / 1000;
+
+    const electricityRate =
+        number("electricityRate");
+
+    const projectCost =
+        number("projectCost");
+
+
+    if(
+        panelPower <= 0 ||
+        panelLength <= 0 ||
+        panelWidth <= 0 ||
+        powerDensity <= 0
+    ) {
+        return;
+    }
+
+
+    /*
+    PANEL AREA
+    */
+
+    const panelAreaM2 =
+        panelLength * panelWidth;
+
+    const panelAreaSqft =
+        panelAreaM2 * 10.7639;
+
+
+    let panels = 0;
+
+    let installedKW = 0;
+
+    let activeAreaSqft = 0;
+
+    let theoreticalKW = 0;
+
+
+    /*
+    TARGET KW MODE
+    */
+
+    if(mode === "kw") {
+
+        panels =
+            Math.ceil(
+                (targetKW * 1000) /
+                panelPower
+            );
+
+        installedKW =
+            (panels * panelPower) /
+            1000;
+
+        activeAreaSqft =
+            panels * panelAreaSqft;
+
+        document.getElementById(
+            "capacityNote"
+        ).innerHTML =
+
+        "Target: " +
+        formatNumber(targetKW,2) +
+        " kWp • Rounded to whole panels";
+
+    }
+
+
+    /*
+    AVAILABLE AREA MODE
+    */
+
+    else {
+
+        const availableAreaM2 =
+            availableArea / 10.7639;
+
+
+        theoreticalKW =
+            (
+                availableAreaM2 *
+                powerDensity
+            ) / 1000;
+
+
+        panels =
+            Math.floor(
+                availableArea /
+                panelAreaSqft
+            );
+
+
+        installedKW =
+            (
+                panels *
+                panelPower
+            ) / 1000;
+
+
+        activeAreaSqft =
+            panels *
+            panelAreaSqft;
+
+
+        document.getElementById(
+            "capacityNote"
+        ).innerHTML =
+
+        "Area potential: " +
+        formatNumber(theoreticalKW,2) +
+        " kWp • Panel layout: " +
+        formatNumber(installedKW,2) +
+        " kWp";
+
+    }
+
+
+    /*
+    GENERATION FACTOR
+    */
+
+    const orientation =
+        document.getElementById(
+            "orientation"
+        ).value;
+
+
+    const customBox =
+        document.getElementById(
+            "customGenerationBox"
+        );
+
+
+    let generationFactor;
+
+
+    if(orientation === "custom") {
+
+        customBox.classList.remove(
+            "hidden"
+        );
+
+        generationFactor =
+            number(
+                "customGeneration"
+            );
+
+    }
+
+    else {
+
+        customBox.classList.add(
+            "hidden"
+        );
+
+        generationFactor =
+            parseFloat(
+                orientation
+            );
+
+    }
+
+
+    /*
+    ENERGY GENERATION
+    */
+
+    const dailyGeneration =
+        installedKW *
+        generationFactor;
+
+
+    const annualGeneration =
+        dailyGeneration *
+        365;
+
+
+    /*
+    FINANCIAL CALCULATIONS
+    */
+
+    const annualSavings =
+        annualGeneration *
+        electricityRate;
+
+
+    let payback = 0;
+
+
+    if(
+        annualSavings > 0 &&
+        projectCost > 0
+    ) {
+
+        payback =
+            projectCost /
+            annualSavings;
+
+    }
+
+
+    /*
+    DISPLAY RESULTS
+    */
+
+    document.getElementById(
+        "installedKW"
+    ).innerHTML =
+
+    formatNumber(
+        installedKW,
+        2
+    ) +
+    " kWp";
+
+
+    document.getElementById(
+        "panelCount"
+    ).innerHTML =
+        panels;
+
+
+    document.getElementById(
+        "activeArea"
+    ).innerHTML =
+
+    formatNumber(
+        activeAreaSqft,
+        0
+    ) +
+    " sqft";
+
+
+    document.getElementById(
+        "dailyGeneration"
+    ).innerHTML =
+
+    formatNumber(
+        dailyGeneration,
+        1
+    ) +
+    " units";
+
+
+    document.getElementById(
+        "annualGeneration"
+    ).innerHTML =
+
+    formatNumber(
+        annualGeneration,
+        0
+    ) +
+    " units";
+
+
+    document.getElementById(
+        "annualSavings"
+    ).innerHTML =
+
+    "₹" +
+    formatNumber(
+        annualSavings,
+        0
+    );
+
+
+    document.getElementById(
+        "payback"
+    ).innerHTML =
+
+    payback > 0
+    ?
+    formatNumber(
+        payback,
+        1
+    ) +
+    " years"
+    :
+    "—";
+
+
+    /*
+    QUICK REFERENCE
+    */
+
+    document.getElementById(
+        "panelAreaRef"
+    ).innerHTML =
+
+    formatNumber(
+        panelAreaSqft,
+        2
+    ) +
+    " sqft";
+
+
+    const sqftPerKW =
+
+        (
+            1000 /
+            powerDensity
+        ) *
+        10.7639;
+
+
+    document.getElementById(
+        "kwAreaRef"
+    ).innerHTML =
+
+    formatNumber(
+        sqftPerKW,
+        1
+    ) +
+    " sqft";
+
+
+    document.getElementById(
+        "panelPowerRef"
+    ).innerHTML =
+
+    panelPower +
+    " Wp";
+
+}
+
+
+/*
+AUTO UPDATE
+*/
+
+document
+.querySelectorAll(
+    "input, select"
+)
+.forEach(
+    element => {
+
+        element.addEventListener(
+            "input",
+            calculate
+        );
+
+        element.addEventListener(
+            "change",
+            calculate
+        );
+
+    }
+);
+
+
+calculate();
+
+</script>
+
+</body>
+</html>
