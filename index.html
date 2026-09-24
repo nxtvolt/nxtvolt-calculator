@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>NXT VOLT | BIPV Calculator</title>
 
 <style>
@@ -14,10 +15,12 @@
   --text:#17352d;
   --muted:#687d76;
   --yellow:#f3c623;
-  --white:#fff;
+  --white:#ffffff;
+  --warning:#fff8df;
 }
 
 *{box-sizing:border-box}
+
 body{
   margin:0;
   font-family:Arial,Helvetica,sans-serif;
@@ -32,27 +35,29 @@ header{
 }
 
 .header-inner{
-  max-width:1050px;
+  max-width:1100px;
   margin:auto;
 }
 
 .brand{
-  font-size:27px;
+  font-size:28px;
   font-weight:800;
   letter-spacing:1px;
 }
 
-.brand span{color:var(--yellow)}
+.brand span{
+  color:var(--yellow);
+}
 
 .subtitle{
   margin-top:5px;
-  opacity:.8;
+  opacity:.82;
   font-size:14px;
 }
 
 .container{
-  max-width:1050px;
-  margin:25px auto 50px;
+  max-width:1100px;
+  margin:24px auto 50px;
   padding:0 15px;
 }
 
@@ -65,43 +70,88 @@ header{
 }
 
 .section-title{
-  font-size:18px;
-  font-weight:700;
-  margin-bottom:15px;
+  font-size:19px;
+  font-weight:800;
+  margin-bottom:5px;
+}
+
+.section-subtitle{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:17px;
+  line-height:1.5;
+}
+
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.product-button,
+.option-button,
+.mode-button,
+.orientation-button{
+  background:white;
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  padding:15px;
+  cursor:pointer;
+  color:var(--text);
+  transition:.15s;
+}
+
+.product-button:hover,
+.option-button:hover,
+.mode-button:hover,
+.orientation-button:hover{
+  border-color:var(--green);
+}
+
+.product-button.active,
+.option-button.active,
+.mode-button.active,
+.orientation-button.active{
+  background:#edf5f2;
+  border:2px solid var(--green);
+}
+
+.product-button strong,
+.option-button strong,
+.mode-button strong,
+.orientation-button strong{
+  display:block;
+  font-size:14px;
+}
+
+.product-button small,
+.option-button small,
+.mode-button small,
+.orientation-button small{
+  display:block;
+  color:var(--muted);
+  margin-top:4px;
+  line-height:1.35;
+}
+
+.option-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:9px;
+}
+
+.two-grid{
+  grid-template-columns:repeat(2,1fr);
 }
 
 .mode-grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.mode{
-  padding:17px;
-  border:1.5px solid var(--border);
-  border-radius:12px;
-  background:white;
-  cursor:pointer;
-  text-align:left;
-}
-
-.mode strong{
-  display:block;
-  font-size:15px;
-  color:var(--text);
-}
-
-.mode small{
-  color:var(--muted);
-}
-
-.mode.active{
-  border:2px solid var(--green);
-  background:#edf5f2;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
 }
 
 .main-input{
-  margin-top:20px;
+  margin-top:18px;
 }
 
 .main-input label{
@@ -112,7 +162,6 @@ header{
 
 .input-big{
   display:flex;
-  align-items:center;
   border:2px solid var(--green);
   border-radius:12px;
   overflow:hidden;
@@ -120,65 +169,48 @@ header{
 
 .input-big input{
   flex:1;
-  border:none;
-  padding:16px;
-  font-size:26px;
-  font-weight:700;
-  outline:none;
   min-width:0;
+  border:none;
+  outline:none;
+  padding:15px;
+  font-size:27px;
+  font-weight:800;
+  color:var(--text);
 }
 
-.unit{
-  padding:17px;
+.input-unit{
   background:var(--light);
-  font-weight:700;
+  padding:17px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
 }
 
-.standard{
+.spec-grid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
+  grid-template-columns:repeat(5,1fr);
+  gap:9px;
   margin-top:18px;
 }
 
-.standard div{
+.spec{
   background:var(--light);
-  padding:13px;
   border-radius:10px;
+  padding:13px;
 }
 
-.standard span{
-  display:block;
-  color:var(--muted);
-  font-size:12px;
-  margin-bottom:5px;
-}
-
-.standard strong{
-  font-size:15px;
-}
-
-.results-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-}
-
-.result{
-  background:var(--light);
-  padding:16px;
-  border-radius:12px;
-}
-
+.spec span,
 .result span{
   display:block;
-  font-size:12px;
+  font-size:11px;
   color:var(--muted);
-  margin-bottom:7px;
+  margin-bottom:6px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
 }
 
-.result strong{
-  font-size:22px;
+.spec strong{
+  font-size:14px;
 }
 
 .primary-result{
@@ -190,14 +222,36 @@ header{
 }
 
 .primary-result span{
-  font-size:13px;
+  display:block;
+  font-size:12px;
   opacity:.8;
 }
 
 .primary-result strong{
   display:block;
-  font-size:34px;
-  margin-top:5px;
+  font-size:35px;
+  margin:6px 0;
+}
+
+.primary-result div{
+  font-size:13px;
+  opacity:.9;
+}
+
+.results-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.result{
+  background:var(--light);
+  border-radius:11px;
+  padding:15px;
+}
+
+.result strong{
+  font-size:20px;
 }
 
 .orientation-grid{
@@ -206,79 +260,71 @@ header{
   gap:9px;
 }
 
-.orientation{
-  padding:13px 8px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:white;
-  cursor:pointer;
-  text-align:center;
-}
-
-.orientation.active{
-  background:var(--green);
-  color:white;
-}
-
-.orientation strong{
-  display:block;
-}
-
-.orientation small{
-  font-size:11px;
-}
-
-.generation{
-  margin-top:15px;
+.generation-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:10px;
+  margin-top:15px;
 }
 
-details{
-  border-top:1px solid var(--border);
-  margin-top:20px;
-  padding-top:15px;
-}
-
-summary{
-  cursor:pointer;
-  font-weight:700;
-}
-
+.finance-grid,
 .advanced-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:12px;
-  margin-top:16px;
+  margin-top:17px;
 }
 
 .field label{
   display:block;
   font-size:13px;
-  font-weight:600;
+  font-weight:700;
   margin-bottom:6px;
 }
 
-.field input{
+.field input,
+.field select{
   width:100%;
   padding:11px;
   border:1px solid var(--border);
   border-radius:8px;
-  font-size:16px;
-}
-
-.finance-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
+  font-size:15px;
+  color:var(--text);
+  background:white;
 }
 
 .financial-results{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:10px;
-  margin-top:15px;
+  margin-top:16px;
+}
+
+details{
+  border-top:1px solid var(--border);
+  margin-top:18px;
+  padding-top:15px;
+}
+
+summary{
+  font-weight:800;
+  cursor:pointer;
+}
+
+.note{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.55;
+  margin-top:12px;
+}
+
+.warning{
+  background:var(--warning);
+  border-radius:10px;
+  padding:12px;
+  font-size:12px;
+  line-height:1.5;
+  margin-top:13px;
 }
 
 .summary-box{
@@ -286,18 +332,18 @@ summary{
   border:1px solid var(--border);
   border-radius:12px;
   padding:18px;
-  line-height:1.6;
   font-size:14px;
+  line-height:1.65;
 }
 
 .copy-button{
   margin-top:12px;
-  background:var(--green);
-  color:white;
   border:none;
   border-radius:9px;
   padding:12px 18px;
-  font-weight:700;
+  background:var(--green);
+  color:white;
+  font-weight:800;
   cursor:pointer;
 }
 
@@ -305,40 +351,58 @@ summary{
   background:var(--green2);
 }
 
-.note{
-  font-size:12px;
-  color:var(--muted);
-  margin-top:13px;
-  line-height:1.5;
+.hidden{
+  display:none !important;
 }
 
-.hidden{display:none}
+.divider{
+  height:1px;
+  background:var(--border);
+  margin:20px 0;
+}
 
-@media(max-width:750px){
-  .standard,
-  .results-grid{
+.label-heading{
+  font-size:13px;
+  font-weight:800;
+  margin:18px 0 8px;
+}
+
+@media(max-width:800px){
+
+  .product-grid{
     grid-template-columns:1fr 1fr;
   }
 
-  .orientation-grid{
+  .option-grid,
+  .results-grid,
+  .spec-grid{
     grid-template-columns:1fr 1fr;
-  }
-
-  .generation{
-    grid-template-columns:1fr;
   }
 
   .financial-results{
-    grid-template-columns:1fr;
+    grid-template-columns:1fr 1fr;
   }
+
 }
 
-@media(max-width:480px){
+@media(max-width:520px){
+
+  .product-grid,
+  .option-grid,
   .mode-grid,
+  .results-grid,
+  .spec-grid,
+  .generation-grid,
+  .finance-grid,
   .advanced-grid,
-  .finance-grid{
+  .financial-results{
     grid-template-columns:1fr;
   }
+
+  .primary-result strong{
+    font-size:29px;
+  }
+
 }
 </style>
 </head>
@@ -346,176 +410,245 @@ summary{
 <body>
 
 <header>
-<div class="header-inner">
-  <div class="brand">NXT <span>VOLT</span></div>
-  <div class="subtitle">Internal BIPV Calculator</div>
-</div>
+  <div class="header-inner">
+    <div class="brand">NXT <span>VOLT</span></div>
+    <div class="subtitle">Internal BIPV & Architectural Solar Calculator</div>
+  </div>
 </header>
 
 <div class="container">
 
-<!-- QUICK CALCULATOR -->
+<!-- PRODUCT -->
 
 <div class="card">
 
-<div class="section-title">Vertical BIPV Calculator</div>
+  <div class="section-title">1. Select Product</div>
+  <div class="section-subtitle">
+    Select the NXT VOLT product you want to calculate.
+  </div>
 
-<div class="mode-grid">
+  <div class="product-grid">
 
-<button class="mode active" id="kwMode">
-<strong>Required Capacity</strong>
-<small>I know the required kW</small>
-</button>
+    <button class="product-button active" data-product="opaque">
+      <strong>Colored / Opaque BIPV</strong>
+      <small>Architectural façade glass</small>
+    </button>
 
-<button class="mode" id="areaMode">
-<strong>Available Area</strong>
-<small>I know the façade area</small>
-</button>
+    <button class="product-button" data-product="transparent">
+      <strong>Transparent BIPV</strong>
+      <small>Façade, pergola, skylight & canopy</small>
+    </button>
+
+    <button class="product-button" data-product="bendable">
+      <strong>Bendable Solar</strong>
+      <small>400 W flexible module</small>
+    </button>
+
+    <button class="product-button" data-product="ultrathin">
+      <strong>Ultra-Thin Solar</strong>
+      <small>100 W lightweight module</small>
+    </button>
+
+  </div>
+
+
+  <!-- TRANSPARENT CONFIG -->
+
+  <div id="transparentOptions" class="hidden">
+
+    <div class="label-heading">Cell Configuration</div>
+
+    <div class="option-grid two-grid">
+
+      <button class="option-button active" data-transparent="spacing">
+        <strong>With Cell Spacing</strong>
+        <small>200 Wp / panel</small>
+      </button>
+
+      <button class="option-button" data-transparent="nospacing">
+        <strong>Without Cell Spacing</strong>
+        <small>300 Wp / panel</small>
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- APPLICATION -->
+
+  <div class="label-heading">Application</div>
+
+  <div class="option-grid" id="applicationButtons">
+
+    <button class="option-button active" data-application="facade">
+      <strong>Vertical Façade</strong>
+      <small>Orientation-based generation</small>
+    </button>
+
+    <button class="option-button" data-application="pergola">
+      <strong>Pergola</strong>
+      <small>Near-horizontal / overhead</small>
+    </button>
+
+    <button class="option-button" data-application="skylight">
+      <strong>Skylight</strong>
+      <small>Solar glazing</small>
+    </button>
+
+    <button class="option-button" data-application="canopy">
+      <strong>Canopy</strong>
+      <small>Solar roof / shade</small>
+    </button>
+
+  </div>
+
+
+  <!-- SPECS -->
+
+  <div class="spec-grid">
+
+    <div class="spec">
+      <span>Panel Size</span>
+      <strong id="specSize">1800 × 1200 mm</strong>
+    </div>
+
+    <div class="spec">
+      <span>Panel Rating</span>
+      <strong id="specPower">432 Wp</strong>
+    </div>
+
+    <div class="spec">
+      <span>Panel Area</span>
+      <strong id="specArea">2.16 m²</strong>
+    </div>
+
+    <div class="spec">
+      <span>Product Price</span>
+      <strong id="specPrice">₹1,300/sqft</strong>
+    </div>
+
+    <div class="spec">
+      <span>BOS</span>
+      <strong id="specBos">₹3,500/panel</strong>
+    </div>
+
+  </div>
 
 </div>
 
-<div class="main-input">
 
-<label id="mainLabel">Required Capacity</label>
-
-<div class="input-big">
-<input type="number" id="mainValue" value="5" min="0">
-<div class="unit" id="mainUnit">kW</div>
-</div>
-
-</div>
-
-
-<div id="usableAreaBox" class="hidden" style="margin-top:16px">
-
-<label style="font-weight:700">Estimated Usable BIPV Area</label>
-
-<select id="usablePercent"
-style="width:100%;padding:12px;margin-top:7px;border:1px solid #dce6e1;border-radius:9px;font-size:16px">
-
-<option value="100">100% — Entire area usable</option>
-<option value="90">90% usable</option>
-<option value="80">80% usable</option>
-<option value="70" selected>70% usable</option>
-<option value="60">60% usable</option>
-<option value="50">50% usable</option>
-
-</select>
-
-<div class="note">
-Use this as an early-stage allowance for columns, beams,
-windows, slab edges and other non-BIPV areas.
-Actual panel layout must be checked from architectural drawings.
-</div>
-
-</div>
-
-
-<div class="standard">
-
-<div>
-<span>STANDARD PANEL</span>
-<strong id="standardSize">1800 × 1200 mm</strong>
-</div>
-
-<div>
-<span>PANEL AREA</span>
-<strong id="standardArea">2.16 m²</strong>
-</div>
-
-<div>
-<span>POWER DENSITY</span>
-<strong id="standardDensity">200 W/m²</strong>
-</div>
-
-<div>
-<span>CALCULATED PANEL POWER</span>
-<strong id="standardPower">432 Wp</strong>
-</div>
-
-</div>
-
-
-<details>
-
-<summary>Advanced Settings</summary>
-
-<div class="advanced-grid">
-
-<div class="field">
-<label>Panel Length (mm)</label>
-<input id="panelLength" type="number" value="1800">
-</div>
-
-<div class="field">
-<label>Panel Width (mm)</label>
-<input id="panelWidth" type="number" value="1200">
-</div>
-
-<div class="field">
-<label>Power Density (W/m²)</label>
-<input id="powerDensity" type="number" value="200">
-</div>
-
-<div class="field">
-<label>Custom Generation Factor</label>
-<input id="customGeneration" type="number" value="2.5" step="0.1">
-</div>
-
-</div>
-
-<div class="note">
-Change power density when using coloured, printed,
-transparent or other BIPV products with a different rated W/m².
-</div>
-
-</details>
-
-</div>
-
-
-<!-- SYSTEM RESULTS -->
+<!-- INPUT -->
 
 <div class="card">
 
-<div class="section-title">System Sizing</div>
+  <div class="section-title">2. What Information Do You Have?</div>
 
-<div class="primary-result">
+  <div class="mode-grid">
 
-<span>ACTUAL INSTALLED CAPACITY</span>
+    <button class="mode-button active" data-mode="kw">
+      <strong>Required Capacity</strong>
+      <small>I know the kW</small>
+    </button>
 
-<strong id="installedCapacity">
-5.18 kWp
-</strong>
+    <button class="mode-button" data-mode="area">
+      <strong>Available Area</strong>
+      <small>I know the sqft</small>
+    </button>
 
-<div id="capacityDescription"></div>
+    <button class="mode-button" data-mode="panels">
+      <strong>Number of Panels</strong>
+      <small>I know the quantity</small>
+    </button>
+
+  </div>
+
+  <div class="main-input">
+
+    <label id="mainLabel">Required Capacity</label>
+
+    <div class="input-big">
+      <input type="number" id="mainValue" value="5" min="0" step="0.1">
+      <div class="input-unit" id="mainUnit">kW</div>
+    </div>
+
+  </div>
+
+
+  <!-- USABLE AREA -->
+
+  <div id="usableAreaBox" class="hidden">
+
+    <div class="label-heading">Estimated Usable Area</div>
+
+    <div class="field">
+      <select id="usablePercent">
+        <option value="100">100% — Entire area usable</option>
+        <option value="90">90% usable</option>
+        <option value="80">80% usable</option>
+        <option value="70" selected>70% usable</option>
+        <option value="60">60% usable</option>
+        <option value="50">50% usable</option>
+      </select>
+    </div>
+
+    <div class="note">
+      Useful for early-stage façade estimates where columns, beams,
+      windows, slab edges or architectural elements reduce the available
+      BIPV area.
+    </div>
+
+  </div>
 
 </div>
 
 
-<div class="results-grid">
+<!-- RESULTS -->
 
-<div class="result">
-<span>PANELS REQUIRED</span>
-<strong id="panelCount">12</strong>
-</div>
+<div class="card">
 
-<div class="result">
-<span>ACTIVE BIPV AREA</span>
-<strong id="areaSqft">279 sqft</strong>
-</div>
+  <div class="section-title">3. System Sizing</div>
 
-<div class="result">
-<span>AREA IN M²</span>
-<strong id="areaM2">25.92 m²</strong>
-</div>
+  <div class="primary-result">
 
-<div class="result">
-<span>POWER / PANEL</span>
-<strong id="powerPerPanel">432 Wp</strong>
-</div>
+    <span>ACTUAL INSTALLED CAPACITY</span>
 
-</div>
+    <strong id="installedCapacity">5.18 kWp</strong>
+
+    <div id="capacityDescription"></div>
+
+  </div>
+
+
+  <div class="results-grid">
+
+    <div class="result">
+      <span>Panels Required</span>
+      <strong id="panelCount">12</strong>
+    </div>
+
+    <div class="result">
+      <span>Active Area</span>
+      <strong id="areaSqft">279 sqft</strong>
+    </div>
+
+    <div class="result">
+      <span>Area</span>
+      <strong id="areaM2">25.92 m²</strong>
+    </div>
+
+    <div class="result">
+      <span>Power / Panel</span>
+      <strong id="powerPerPanel">432 Wp</strong>
+    </div>
+
+  </div>
+
+  <div id="areaLayoutWarning" class="warning hidden">
+    Available-area mode is an early-stage area estimate only.
+    Actual module quantity must be verified against façade dimensions,
+    structural grid, joints, openings and module layout.
+  </div>
 
 </div>
 
@@ -524,139 +657,236 @@ transparent or other BIPV products with a different rated W/m².
 
 <div class="card">
 
-<div class="section-title">Generation Estimate</div>
+  <div class="section-title">4. Generation Estimate</div>
 
-<div class="orientation-grid">
+  <div id="verticalOrientation">
 
-<button class="orientation active" data-factor="2.65" data-name="South">
-<strong>South</strong>
-<small>2.65 units/kWp/day</small>
-</button>
+    <div class="section-subtitle">
+      Select the façade orientation.
+    </div>
 
-<button class="orientation" data-factor="2" data-name="East">
-<strong>East</strong>
-<small>2.0 units/kWp/day</small>
-</button>
+    <div class="orientation-grid">
 
-<button class="orientation" data-factor="2" data-name="West">
-<strong>West</strong>
-<small>2.0 units/kWp/day</small>
-</button>
+      <button class="orientation-button active"
+              data-orientation="South"
+              data-factor="2.65">
+        <strong>South</strong>
+        <small>2.65 units/kWp/day</small>
+      </button>
 
-<button class="orientation" data-factor="custom" data-name="Custom">
-<strong>Custom</strong>
-<small>Advanced setting</small>
-</button>
+      <button class="orientation-button"
+              data-orientation="East"
+              data-factor="2">
+        <strong>East</strong>
+        <small>2.0 units/kWp/day</small>
+      </button>
+
+      <button class="orientation-button"
+              data-orientation="West"
+              data-factor="2">
+        <strong>West</strong>
+        <small>2.0 units/kWp/day</small>
+      </button>
+
+      <button class="orientation-button"
+              data-orientation="Custom"
+              data-factor="custom">
+        <strong>Custom</strong>
+        <small>Enter project-specific yield</small>
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div id="horizontalGeneration" class="hidden">
+
+    <div class="warning">
+      Preliminary generation assumption for this application:
+      <strong id="horizontalFactorText">4.0 units/kWp/day</strong>.
+      Use Advanced Settings if you have a project-specific generation estimate.
+    </div>
+
+  </div>
+
+
+  <div class="generation-grid">
+
+    <div class="result">
+      <span>Daily Generation</span>
+      <strong id="dailyGeneration">—</strong>
+    </div>
+
+    <div class="result">
+      <span>Monthly Generation</span>
+      <strong id="monthlyGeneration">—</strong>
+    </div>
+
+    <div class="result">
+      <span>Annual Generation</span>
+      <strong id="annualGeneration">—</strong>
+    </div>
+
+  </div>
+
+  <div class="note">
+    Generation figures are preliminary sales-stage estimates only.
+    Actual output depends on project location, orientation, tilt,
+    irradiation, shading, temperature, module configuration and system losses.
+  </div>
 
 </div>
 
 
-<div class="generation">
-
-<div class="result">
-<span>DAILY GENERATION</span>
-<strong id="dailyGeneration">—</strong>
-</div>
-
-<div class="result">
-<span>MONTHLY GENERATION</span>
-<strong id="monthlyGeneration">—</strong>
-</div>
-
-<div class="result">
-<span>ANNUAL GENERATION</span>
-<strong id="annualGeneration">—</strong>
-</div>
-
-</div>
-
-<div class="note">
-Preliminary generation estimate only. Actual generation depends
-on project location, exact orientation, irradiation, shading,
-temperature, module characteristics and system losses.
-</div>
-
-</div>
-
-
-<!-- FINANCIALS -->
+<!-- PRICING -->
 
 <div class="card">
 
-<details>
+  <div class="section-title">5. Pricing & ROI</div>
 
-<summary>₹ Calculate Pricing & ROI</summary>
+  <div class="finance-grid">
 
-<div style="margin-top:18px" class="finance-grid">
+    <div class="field">
+      <label>Electricity Tariff (₹ / unit)</label>
+      <input type="number" id="tariff" value="10" step="0.1">
+    </div>
 
-<div class="field">
-<label>Electricity Tariff (₹ / unit)</label>
-<input id="tariff" type="number" value="10" step="0.1">
+    <div class="field">
+      <label>Structure Cost (₹)</label>
+      <input type="number" id="structureCost" value="0">
+    </div>
+
+    <div class="field">
+      <label>Installation Cost (₹)</label>
+      <input type="number" id="installationCost" value="0">
+    </div>
+
+    <div class="field">
+      <label>Inverter / Electrical Cost (₹)</label>
+      <input type="number" id="electricalCost" value="0">
+    </div>
+
+    <div class="field">
+      <label>Other Cost (₹)</label>
+      <input type="number" id="otherCost" value="0">
+    </div>
+
+  </div>
+
+
+  <div class="financial-results">
+
+    <div class="result">
+      <span>Product Cost</span>
+      <strong id="productCost">—</strong>
+    </div>
+
+    <div class="result" id="bosResultBox">
+      <span>BOS Cost</span>
+      <strong id="bosCost">—</strong>
+    </div>
+
+    <div class="result">
+      <span>Total Project Cost</span>
+      <strong id="totalCost">—</strong>
+    </div>
+
+    <div class="result">
+      <span>Annual Electricity Value</span>
+      <strong id="annualSavings">—</strong>
+    </div>
+
+    <div class="result">
+      <span>Simple Payback</span>
+      <strong id="payback">—</strong>
+    </div>
+
+    <div class="result">
+      <span>Cost / kWp</span>
+      <strong id="costPerKW">—</strong>
+    </div>
+
+    <div class="result">
+      <span>Cost / sqft</span>
+      <strong id="costPerSqft">—</strong>
+    </div>
+
+  </div>
+
 </div>
 
-<div class="field">
-<label>BIPV Product Rate (₹ / sqft)</label>
-<input id="productRate" type="number" value="1200">
-</div>
 
-<div class="field">
-<label>BOS Cost / Panel (₹)</label>
-<input id="bosPerPanel" type="number" value="3500">
-</div>
+<!-- ADVANCED -->
 
-<div class="field">
-<label>Structure Cost (₹)</label>
-<input id="structureCost" type="number" value="0">
-</div>
+<div class="card">
 
-<div class="field">
-<label>Inverter / Electrical Cost (₹)</label>
-<input id="electricalCost" type="number" value="0">
-</div>
+  <details>
 
-<div class="field">
-<label>Installation / Other Cost (₹)</label>
-<input id="installationCost" type="number" value="0">
-</div>
+    <summary>Advanced Settings</summary>
 
-</div>
+    <div class="section-subtitle" style="margin-top:10px">
+      Change these only when the manufacturer or project specifications
+      differ from the NXT VOLT defaults.
+    </div>
 
+    <div class="advanced-grid">
 
-<div class="financial-results">
+      <div class="field">
+        <label>Panel Length (mm)</label>
+        <input id="advancedLength" type="number">
+      </div>
 
-<div class="result">
-<span>PRODUCT COST</span>
-<strong id="productCost">—</strong>
-</div>
+      <div class="field">
+        <label>Panel Width (mm)</label>
+        <input id="advancedWidth" type="number">
+      </div>
 
-<div class="result">
-<span>TOTAL PROJECT COST</span>
-<strong id="totalCost">—</strong>
-</div>
+      <div class="field">
+        <label>Panel Power (Wp)</label>
+        <input id="advancedPower" type="number">
+      </div>
 
-<div class="result">
-<span>ANNUAL ELECTRICITY VALUE</span>
-<strong id="annualSavings">—</strong>
-</div>
+      <div class="field" id="densityField">
+        <label>Power Density (W/m²)</label>
+        <input id="advancedDensity" type="number">
+      </div>
 
-<div class="result">
-<span>SIMPLE PAYBACK</span>
-<strong id="payback">—</strong>
-</div>
+      <div class="field">
+        <label id="priceLabel">Product Price (₹ / sqft)</label>
+        <input id="advancedPrice" type="number">
+      </div>
 
-<div class="result">
-<span>COST / kWp</span>
-<strong id="costPerKW">—</strong>
-</div>
+      <div class="field" id="bosAdvancedField">
+        <label>BOS / Panel (₹)</label>
+        <input id="advancedBos" type="number">
+      </div>
 
-<div class="result">
-<span>COST / sqft</span>
-<strong id="costPerSqft">—</strong>
-</div>
+      <div class="field">
+        <label>Custom Vertical Yield (units/kWp/day)</label>
+        <input id="customVerticalFactor"
+               type="number"
+               value="2.5"
+               step="0.1">
+      </div>
 
-</div>
+      <div class="field">
+        <label>Overhead Yield (units/kWp/day)</label>
+        <input id="overheadFactor"
+               type="number"
+               value="4"
+               step="0.1">
+      </div>
 
-</details>
+    </div>
+
+    <div class="note">
+      For Colored / Opaque BIPV, the standard 432 Wp rating is derived
+      from 2.16 m² × 200 W/m². Transparent, Bendable and Ultra-Thin
+      products use their stated panel wattage.
+    </div>
+
+  </details>
 
 </div>
 
@@ -665,19 +895,19 @@ temperature, module characteristics and system losses.
 
 <div class="card">
 
-<div class="section-title">Customer Answer</div>
+  <div class="section-title">6. Customer Answer</div>
 
-<div class="summary-box" id="customerSummary"></div>
+  <div class="summary-box" id="customerSummary"></div>
 
-<button class="copy-button" id="copyButton">
-Copy Customer Summary
-</button>
+  <button class="copy-button" id="copyButton">
+    Copy Customer Summary
+  </button>
 
-<div class="note">
-Use this as a preliminary customer response. Final capacity,
-generation, structural suitability and pricing should be confirmed
-after reviewing project drawings and site conditions.
-</div>
+  <div class="note">
+    Preliminary estimate only. Final module layout, structural suitability,
+    electrical design, generation and commercial quotation should be
+    confirmed after reviewing project drawings and site conditions.
+  </div>
 
 </div>
 
@@ -686,104 +916,381 @@ after reviewing project drawings and site conditions.
 
 <script>
 
+/* -----------------------------------------
+   NXT VOLT PRODUCT DATABASE
+----------------------------------------- */
+
+const products = {
+
+  opaque:{
+    name:"Colored / Opaque BIPV",
+    length:1800,
+    width:1200,
+    density:200,
+    power:null,
+    priceType:"sqft",
+    price:1300,
+    bos:3500
+  },
+
+  transparentSpacing:{
+    name:"Transparent BIPV – With Cell Spacing",
+    length:1200,
+    width:1200,
+    density:null,
+    power:200,
+    priceType:"sqft",
+    price:900,
+    bos:4000
+  },
+
+  transparentNoSpacing:{
+    name:"Transparent BIPV – Without Cell Spacing",
+    length:1200,
+    width:1200,
+    density:null,
+    power:300,
+    priceType:"sqft",
+    price:900,
+    bos:4000
+  },
+
+  bendable:{
+    name:"Bendable Solar 400 W",
+    length:2130,
+    width:925,
+    density:null,
+    power:400,
+    priceType:"panel",
+    price:17000,
+    bos:0
+  },
+
+  ultrathin:{
+    name:"Ultra-Thin Solar 100 W",
+    length:914.4,
+    width:670.56,
+    density:null,
+    power:100,
+    priceType:"panel",
+    price:7000,
+    bos:0
+  }
+
+};
+
+
+/* -----------------------------------------
+   STATE
+----------------------------------------- */
+
+let selectedProduct = "opaque";
+let transparentType = "spacing";
+let application = "facade";
 let mode = "kw";
-let generationFactor = 2.65;
+
 let orientationName = "South";
+let orientationFactor = 2.65;
 
 
-const $ = id =>
-document.getElementById(id);
+/* -----------------------------------------
+   HELPERS
+----------------------------------------- */
 
+const $ = id => document.getElementById(id);
 
-function num(id){
+function numberValue(id){
 
-  const n =
+  const value =
   parseFloat($(id).value);
 
-  return isNaN(n) ? 0 : n;
+  return isNaN(value)
+  ? 0
+  : value;
 
 }
 
+function formatNumber(value, decimals=1){
 
-function fmt(n,d=1){
-
-  return n.toLocaleString(
+  return Number(value).toLocaleString(
     "en-IN",
     {
-      maximumFractionDigits:d
+      maximumFractionDigits:decimals
     }
   );
 
 }
 
-
-function rupees(n){
+function money(value){
 
   return "₹" +
-  Math.round(n)
+  Math.round(value)
   .toLocaleString("en-IN");
 
 }
 
+function getProductKey(){
 
-/* MODE BUTTONS */
+  if(selectedProduct === "transparent"){
 
-$("kwMode").onclick = function(){
+    return transparentType === "spacing"
+    ? "transparentSpacing"
+    : "transparentNoSpacing";
 
-  mode = "kw";
+  }
 
-  $("kwMode").classList.add("active");
-  $("areaMode").classList.remove("active");
+  return selectedProduct;
 
-  $("mainLabel").innerText =
-  "Required Capacity";
+}
 
-  $("mainUnit").innerText =
-  "kW";
 
-  $("mainValue").value = 5;
+/* -----------------------------------------
+   LOAD PRODUCT DEFAULTS
+----------------------------------------- */
 
-  $("usableAreaBox")
-  .classList.add("hidden");
+function loadProductDefaults(){
+
+  const key = getProductKey();
+  const product = products[key];
+
+  $("advancedLength").value =
+  product.length;
+
+  $("advancedWidth").value =
+  product.width;
+
+  $("advancedDensity").value =
+  product.density || "";
+
+  if(key === "opaque"){
+
+    const area =
+    (product.length / 1000) *
+    (product.width / 1000);
+
+    $("advancedPower").value =
+    area * product.density;
+
+  }else{
+
+    $("advancedPower").value =
+    product.power;
+
+  }
+
+  $("advancedPrice").value =
+  product.price;
+
+  $("advancedBos").value =
+  product.bos;
+
+  updateAdvancedVisibility();
 
   calculate();
 
-};
+}
 
 
-$("areaMode").onclick = function(){
-
-  mode = "area";
-
-  $("areaMode").classList.add("active");
-  $("kwMode").classList.remove("active");
-
-  $("mainLabel").innerText =
-  "Gross Available Façade Area";
-
-  $("mainUnit").innerText =
-  "sqft";
-
-  $("mainValue").value = 1000;
-
-  $("usableAreaBox")
-  .classList.remove("hidden");
-
-  calculate();
-
-};
-
-
-/* ORIENTATION */
+/* -----------------------------------------
+   PRODUCT BUTTONS
+----------------------------------------- */
 
 document
-.querySelectorAll(".orientation")
+.querySelectorAll(".product-button")
 .forEach(button => {
 
-  button.onclick = function(){
+  button.addEventListener("click", function(){
 
     document
-    .querySelectorAll(".orientation")
+    .querySelectorAll(".product-button")
+    .forEach(b =>
+      b.classList.remove("active")
+    );
+
+    this.classList.add("active");
+
+    selectedProduct =
+    this.dataset.product;
+
+    if(selectedProduct === "transparent"){
+
+      $("transparentOptions")
+      .classList.remove("hidden");
+
+    }else{
+
+      $("transparentOptions")
+      .classList.add("hidden");
+
+    }
+
+    /*
+    Bendable / Ultra-Thin can still be
+    calculated for different applications.
+    */
+
+    loadProductDefaults();
+
+  });
+
+});
+
+
+/* -----------------------------------------
+   TRANSPARENT CONFIGURATION
+----------------------------------------- */
+
+document
+.querySelectorAll("[data-transparent]")
+.forEach(button => {
+
+  button.addEventListener("click", function(){
+
+    document
+    .querySelectorAll("[data-transparent]")
+    .forEach(b =>
+      b.classList.remove("active")
+    );
+
+    this.classList.add("active");
+
+    transparentType =
+    this.dataset.transparent;
+
+    loadProductDefaults();
+
+  });
+
+});
+
+
+/* -----------------------------------------
+   APPLICATION
+----------------------------------------- */
+
+document
+.querySelectorAll("[data-application]")
+.forEach(button => {
+
+  button.addEventListener("click", function(){
+
+    document
+    .querySelectorAll("[data-application]")
+    .forEach(b =>
+      b.classList.remove("active")
+    );
+
+    this.classList.add("active");
+
+    application =
+    this.dataset.application;
+
+    updateGenerationUI();
+
+    calculate();
+
+  });
+
+});
+
+
+/* -----------------------------------------
+   INPUT MODE
+----------------------------------------- */
+
+document
+.querySelectorAll("[data-mode]")
+.forEach(button => {
+
+  button.addEventListener("click", function(){
+
+    document
+    .querySelectorAll("[data-mode]")
+    .forEach(b =>
+      b.classList.remove("active")
+    );
+
+    this.classList.add("active");
+
+    mode =
+    this.dataset.mode;
+
+    if(mode === "kw"){
+
+      $("mainLabel").innerText =
+      "Required Capacity";
+
+      $("mainUnit").innerText =
+      "kW";
+
+      $("mainValue").value =
+      5;
+
+      $("usableAreaBox")
+      .classList.add("hidden");
+
+      $("areaLayoutWarning")
+      .classList.add("hidden");
+
+    }
+
+    if(mode === "area"){
+
+      $("mainLabel").innerText =
+      "Gross Available Area";
+
+      $("mainUnit").innerText =
+      "sqft";
+
+      $("mainValue").value =
+      1000;
+
+      $("usableAreaBox")
+      .classList.remove("hidden");
+
+      $("areaLayoutWarning")
+      .classList.remove("hidden");
+
+    }
+
+    if(mode === "panels"){
+
+      $("mainLabel").innerText =
+      "Number of Panels";
+
+      $("mainUnit").innerText =
+      "panels";
+
+      $("mainValue").value =
+      10;
+
+      $("usableAreaBox")
+      .classList.add("hidden");
+
+      $("areaLayoutWarning")
+      .classList.add("hidden");
+
+    }
+
+    calculate();
+
+  });
+
+});
+
+
+/* -----------------------------------------
+   ORIENTATION
+----------------------------------------- */
+
+document
+.querySelectorAll("[data-orientation]")
+.forEach(button => {
+
+  button.addEventListener("click", function(){
+
+    document
+    .querySelectorAll("[data-orientation]")
     .forEach(b =>
       b.classList.remove("active")
     );
@@ -791,21 +1298,18 @@ document
     this.classList.add("active");
 
     orientationName =
-    this.dataset.name;
+    this.dataset.orientation;
 
-    if(
-      this.dataset.factor ===
-      "custom"
-    ){
+    if(this.dataset.factor === "custom"){
 
-      generationFactor =
-      num("customGeneration");
+      orientationFactor =
+      numberValue(
+        "customVerticalFactor"
+      );
 
-    }
+    }else{
 
-    else{
-
-      generationFactor =
+      orientationFactor =
       parseFloat(
         this.dataset.factor
       );
@@ -814,428 +1318,663 @@ document
 
     calculate();
 
-  };
+  });
 
 });
 
 
-function calculate(){
+/* -----------------------------------------
+   GENERATION UI
+----------------------------------------- */
 
-  const lengthMM =
-  num("panelLength");
+function updateGenerationUI(){
 
-  const widthMM =
-  num("panelWidth");
+  if(application === "facade"){
 
-  const density =
-  num("powerDensity");
+    $("verticalOrientation")
+    .classList.remove("hidden");
+
+    $("horizontalGeneration")
+    .classList.add("hidden");
+
+  }else{
+
+    $("verticalOrientation")
+    .classList.add("hidden");
+
+    $("horizontalGeneration")
+    .classList.remove("hidden");
+
+  }
+
+}
 
 
-  if(
-    lengthMM <= 0 ||
-    widthMM <= 0 ||
-    density <= 0
-  ){
-    return;
+/* -----------------------------------------
+   ADVANCED VISIBILITY
+----------------------------------------- */
+
+function updateAdvancedVisibility(){
+
+  const key =
+  getProductKey();
+
+  const product =
+  products[key];
+
+  if(key === "opaque"){
+
+    $("densityField")
+    .classList.remove("hidden");
+
+  }else{
+
+    $("densityField")
+    .classList.add("hidden");
+
   }
 
 
-  /*
-  PANEL CALCULATION
-  */
+  if(product.priceType === "panel"){
+
+    $("priceLabel").innerText =
+    "Product Price (₹ / panel)";
+
+  }else{
+
+    $("priceLabel").innerText =
+    "Product Price (₹ / sqft)";
+
+  }
+
+
+  if(product.bos === 0){
+
+    $("bosAdvancedField")
+    .classList.add("hidden");
+
+    $("bosResultBox")
+    .classList.add("hidden");
+
+  }else{
+
+    $("bosAdvancedField")
+    .classList.remove("hidden");
+
+    $("bosResultBox")
+    .classList.remove("hidden");
+
+  }
+
+}
+
+
+/* -----------------------------------------
+   MAIN CALCULATION
+----------------------------------------- */
+
+function calculate(){
+
+  const key =
+  getProductKey();
+
+  const product =
+  products[key];
+
+
+  /* PANEL DIMENSIONS */
+
+  const lengthMM =
+  numberValue("advancedLength");
+
+  const widthMM =
+  numberValue("advancedWidth");
 
   const panelAreaM2 =
   (lengthMM / 1000) *
   (widthMM / 1000);
-
 
   const panelAreaSqft =
   panelAreaM2 *
   10.7639;
 
 
-  const panelPower =
-  panelAreaM2 *
-  density;
+  /* PANEL POWER */
+
+  let panelPower;
+
+  if(key === "opaque"){
+
+    const density =
+    numberValue("advancedDensity");
+
+    panelPower =
+    panelAreaM2 *
+    density;
+
+    /*
+    Keep the displayed panel power
+    synchronized with W/m².
+    */
+
+    $("advancedPower").value =
+    panelPower.toFixed(0);
+
+  }else{
+
+    panelPower =
+    numberValue("advancedPower");
+
+  }
 
 
-  $("standardSize").innerText =
-  lengthMM +
+  if(
+    panelAreaM2 <= 0 ||
+    panelPower <= 0
+  ){
+    return;
+  }
+
+
+  /* PRODUCT SPECIFICATIONS */
+
+  $("specSize").innerText =
+  formatNumber(lengthMM,0) +
   " × " +
-  widthMM +
+  formatNumber(widthMM,0) +
   " mm";
 
 
-  $("standardArea").innerText =
-  fmt(panelAreaM2,2) +
-  " m²";
-
-
-  $("standardDensity").innerText =
-  fmt(density,0) +
-  " W/m²";
-
-
-  $("standardPower").innerText =
-  fmt(panelPower,0) +
+  $("specPower").innerText =
+  formatNumber(panelPower,0) +
   " Wp";
 
 
-  /*
-  SYSTEM SIZING
-  */
+  $("specArea").innerText =
+  formatNumber(panelAreaM2,2) +
+  " m²";
+
+
+  const price =
+  numberValue("advancedPrice");
+
+
+  if(product.priceType === "panel"){
+
+    $("specPrice").innerText =
+    money(price) +
+    "/panel";
+
+  }else{
+
+    $("specPrice").innerText =
+    money(price) +
+    "/sqft";
+
+  }
+
+
+  const bosPerPanel =
+  product.bos === 0
+  ? 0
+  : numberValue("advancedBos");
+
+
+  $("specBos").innerText =
+  bosPerPanel > 0
+  ? money(bosPerPanel) + "/panel"
+  : "Not applicable";
+
+
+  /* SYSTEM SIZING */
 
   let panels = 0;
-  let installedKW = 0;
-  let totalAreaM2 = 0;
-  let totalAreaSqft = 0;
+
+  const input =
+  numberValue("mainValue");
 
 
   if(mode === "kw"){
 
-    const targetKW =
-    num("mainValue");
-
-
     panels =
     Math.ceil(
-      targetKW *
-      1000 /
+      (input * 1000) /
       panelPower
     );
 
-
-    installedKW =
-    panels *
-    panelPower /
-    1000;
+  }
 
 
-    totalAreaM2 =
-    panels *
-    panelAreaM2;
+  if(mode === "area"){
+
+    const usablePercent =
+    numberValue("usablePercent");
+
+    const usableSqft =
+    input *
+    usablePercent /
+    100;
+
+    panels =
+    Math.floor(
+      usableSqft /
+      panelAreaSqft
+    );
+
+  }
 
 
-    totalAreaSqft =
-    panels *
-    panelAreaSqft;
+  if(mode === "panels"){
+
+    panels =
+    Math.floor(input);
+
+  }
 
 
-    $("capacityDescription")
-    .innerText =
+  if(panels < 0){
+    panels = 0;
+  }
 
+
+  const installedKW =
+  panels *
+  panelPower /
+  1000;
+
+
+  const totalAreaM2 =
+  panels *
+  panelAreaM2;
+
+
+  const totalAreaSqft =
+  panels *
+  panelAreaSqft;
+
+
+  /* CAPACITY DESCRIPTION */
+
+  let description = "";
+
+
+  if(mode === "kw"){
+
+    description =
     "Target " +
-    fmt(targetKW,2) +
-    " kW • Rounded up to " +
+    formatNumber(input,2) +
+    " kW • Rounded to " +
     panels +
     " complete panels";
 
   }
 
 
-  else{
+  if(mode === "area"){
 
-    const grossArea =
-    num("mainValue");
+    const usablePercent =
+    numberValue("usablePercent");
 
-
-    const usablePercentage =
-    num("usablePercent");
-
-
-    const usableArea =
-    grossArea *
-    usablePercentage /
+    const usableSqft =
+    input *
+    usablePercent /
     100;
 
-
-    panels =
-    Math.floor(
-      usableArea /
-      panelAreaSqft
-    );
-
-
-    installedKW =
-    panels *
-    panelPower /
-    1000;
-
-
-    totalAreaM2 =
-    panels *
-    panelAreaM2;
-
-
-    totalAreaSqft =
-    panels *
-    panelAreaSqft;
-
-
-    $("capacityDescription")
-    .innerText =
-
-    fmt(grossArea,0) +
-    " sqft gross façade • " +
-    usablePercentage +
+    description =
+    formatNumber(input,0) +
+    " sqft gross • " +
+    usablePercent +
     "% assumed usable • " +
-    fmt(usableArea,0) +
+    formatNumber(usableSqft,0) +
     " sqft usable";
 
   }
 
 
-  $("installedCapacity")
-  .innerText =
-  fmt(installedKW,3) +
-  " kWp";
+  if(mode === "panels"){
 
-
-  $("panelCount")
-  .innerText =
-  panels;
-
-
-  $("areaSqft")
-  .innerText =
-  fmt(totalAreaSqft,0) +
-  " sqft";
-
-
-  $("areaM2")
-  .innerText =
-  fmt(totalAreaM2,2) +
-  " m²";
-
-
-  $("powerPerPanel")
-  .innerText =
-  fmt(panelPower,0) +
-  " Wp";
-
-
-  /*
-  GENERATION
-  */
-
-  if(
-    orientationName ===
-    "Custom"
-  ){
-
-    generationFactor =
-    num(
-      "customGeneration"
-    );
+    description =
+    panels +
+    " panels selected";
 
   }
 
 
-  const daily =
-  installedKW *
-  generationFactor;
+  $("installedCapacity").innerText =
+  formatNumber(installedKW,3) +
+  " kWp";
 
 
-  const monthly =
-  daily *
-  30.4;
+  $("capacityDescription").innerText =
+  description;
 
 
-  const annual =
-  daily *
-  365;
-
-
-  $("dailyGeneration")
-  .innerText =
-  fmt(daily,1) +
-  " units";
-
-
-  $("monthlyGeneration")
-  .innerText =
-  fmt(monthly,0) +
-  " units";
-
-
-  $("annualGeneration")
-  .innerText =
-  fmt(annual,0) +
-  " units";
-
-
-  /*
-  FINANCIALS
-  */
-
-  const tariff =
-  num("tariff");
-
-
-  const productRate =
-  num("productRate");
-
-
-  const bos =
-  num("bosPerPanel") *
+  $("panelCount").innerText =
   panels;
 
 
-  const productCost =
-  totalAreaSqft *
-  productRate;
+  $("areaSqft").innerText =
+  formatNumber(totalAreaSqft,0) +
+  " sqft";
+
+
+  $("areaM2").innerText =
+  formatNumber(totalAreaM2,2) +
+  " m²";
+
+
+  $("powerPerPanel").innerText =
+  formatNumber(panelPower,0) +
+  " Wp";
+
+
+  /* GENERATION */
+
+  let yieldFactor;
+  let generationDescription;
+
+
+  if(application === "facade"){
+
+    if(orientationName === "Custom"){
+
+      yieldFactor =
+      numberValue(
+        "customVerticalFactor"
+      );
+
+    }else{
+
+      yieldFactor =
+      orientationFactor;
+
+    }
+
+    generationDescription =
+    orientationName.toLowerCase() +
+    "-facing vertical";
+
+  }else{
+
+    yieldFactor =
+    numberValue(
+      "overheadFactor"
+    );
+
+    generationDescription =
+    application;
+
+    $("horizontalFactorText").innerText =
+    formatNumber(yieldFactor,2) +
+    " units/kWp/day";
+
+  }
+
+
+  const dailyGeneration =
+  installedKW *
+  yieldFactor;
+
+
+  const monthlyGeneration =
+  dailyGeneration *
+  30.4;
+
+
+  const annualGeneration =
+  dailyGeneration *
+  365;
+
+
+  $("dailyGeneration").innerText =
+  formatNumber(dailyGeneration,1) +
+  " units";
+
+
+  $("monthlyGeneration").innerText =
+  formatNumber(monthlyGeneration,0) +
+  " units";
+
+
+  $("annualGeneration").innerText =
+  formatNumber(annualGeneration,0) +
+  " units";
+
+
+  /* PRICING */
+
+  let productCost;
+
+
+  if(product.priceType === "panel"){
+
+    productCost =
+    panels *
+    price;
+
+  }else{
+
+    productCost =
+    totalAreaSqft *
+    price;
+
+  }
+
+
+  const bosCost =
+  panels *
+  bosPerPanel;
+
+
+  const structureCost =
+  numberValue("structureCost");
+
+  const installationCost =
+  numberValue("installationCost");
+
+  const electricalCost =
+  numberValue("electricalCost");
+
+  const otherCost =
+  numberValue("otherCost");
 
 
   const totalCost =
   productCost +
-  bos +
-  num("structureCost") +
-  num("electricalCost") +
-  num("installationCost");
+  bosCost +
+  structureCost +
+  installationCost +
+  electricalCost +
+  otherCost;
 
 
-  const savings =
-  annual *
+  const tariff =
+  numberValue("tariff");
+
+
+  const annualSavings =
+  annualGeneration *
   tariff;
 
 
   const payback =
-  savings > 0
-  ?
-  totalCost /
-  savings
-  :
-  0;
+  annualSavings > 0
+  ? totalCost /
+    annualSavings
+  : 0;
 
 
-  $("productCost")
-  .innerText =
-  rupees(productCost);
+  const costPerKW =
+  installedKW > 0
+  ? totalCost /
+    installedKW
+  : 0;
 
 
-  $("totalCost")
-  .innerText =
-  rupees(totalCost);
+  const costPerSqft =
+  totalAreaSqft > 0
+  ? totalCost /
+    totalAreaSqft
+  : 0;
 
 
-  $("annualSavings")
-  .innerText =
-  rupees(savings) +
+  $("productCost").innerText =
+  money(productCost);
+
+
+  $("bosCost").innerText =
+  money(bosCost);
+
+
+  $("totalCost").innerText =
+  money(totalCost);
+
+
+  $("annualSavings").innerText =
+  money(annualSavings) +
   " / yr";
 
 
-  $("payback")
-  .innerText =
+  $("payback").innerText =
   payback > 0
-  ?
-  fmt(payback,1) +
-  " years"
-  :
-  "—";
+  ? formatNumber(payback,1) +
+    " years"
+  : "—";
 
 
-  $("costPerKW")
-  .innerText =
-  installedKW > 0
-  ?
-  rupees(
-    totalCost /
-    installedKW
-  )
-  :
-  "—";
+  $("costPerKW").innerText =
+  costPerKW > 0
+  ? money(costPerKW)
+  : "—";
 
 
-  $("costPerSqft")
-  .innerText =
-  totalAreaSqft > 0
-  ?
-  rupees(
-    totalCost /
-    totalAreaSqft
-  )
-  :
-  "—";
+  $("costPerSqft").innerText =
+  costPerSqft > 0
+  ? money(costPerSqft)
+  : "—";
 
 
-  /*
-  CUSTOMER SUMMARY
-  */
+  /* CUSTOMER SUMMARY */
 
-  let opening;
+  let intro;
 
 
   if(mode === "kw"){
 
-    opening =
+    intro =
     "For a " +
-    fmt(num("mainValue"),2) +
-    " kW vertical BIPV requirement";
+    formatNumber(input,2) +
+    " kW requirement";
+
+  }
+
+  else if(mode === "area"){
+
+    intro =
+    "Based on the available area of " +
+    formatNumber(input,0) +
+    " sqft";
 
   }
 
   else{
 
-    opening =
-    "For the available façade area";
+    intro =
+    "Based on " +
+    panels +
+    " panels";
 
   }
 
 
-  $("customerSummary")
-  .innerHTML =
+  let pricingText;
 
-  "<strong>" +
-  opening +
-  ":</strong><br><br>" +
+  if(product.priceType === "panel"){
 
-  "Based on " +
-  fmt(lengthMM,0) +
-  " × " +
-  fmt(widthMM,0) +
-  " mm BIPV glass at " +
-  fmt(density,0) +
-  " W/m², each panel is approximately <strong>" +
-  fmt(panelPower,0) +
-  " Wp</strong>.<br><br>" +
+    pricingText =
+    "At " +
+    money(price) +
+    " per panel, the estimated product cost is <strong>" +
+    money(productCost) +
+    "</strong>.";
 
-  "Approximately <strong>" +
-  panels +
-  " panels</strong> would provide an installed capacity of <strong>" +
-  fmt(installedKW,3) +
-  " kWp</strong>, requiring approximately <strong>" +
-  fmt(totalAreaM2,2) +
-  " m² / " +
-  fmt(totalAreaSqft,0) +
-  " sqft</strong> of active BIPV area.<br><br>" +
+  }else{
 
-  "For a " +
-  orientationName.toLowerCase() +
-  "-facing vertical installation, preliminary generation is approximately <strong>" +
-  fmt(daily,1) +
-  " units/day</strong> or <strong>" +
-  fmt(annual,0) +
-  " units/year</strong>.<br><br>" +
+    pricingText =
+    "At " +
+    money(price) +
+    " per sqft, the estimated product cost is <strong>" +
+    money(productCost) +
+    "</strong>.";
 
-  "Final panel layout and generation will depend on the project location, architectural elevation, orientation and shading.";
+  }
+
+
+  let bosText = "";
+
+  if(bosCost > 0){
+
+    bosText =
+    " Estimated BOS is <strong>" +
+    money(bosCost) +
+    "</strong>.";
+
+  }
+
+
+  $("customerSummary").innerHTML =
+
+    "<strong>" +
+    product.name +
+    " – Preliminary Estimate</strong><br><br>" +
+
+    intro +
+    ", approximately <strong>" +
+    panels +
+    " panels</strong> are required/provided, giving an actual installed capacity of <strong>" +
+    formatNumber(installedKW,3) +
+    " kWp</strong>.<br><br>" +
+
+    "Each panel is approximately <strong>" +
+    formatNumber(panelPower,0) +
+    " Wp</strong>. Total active solar area is approximately <strong>" +
+    formatNumber(totalAreaM2,2) +
+    " m² / " +
+    formatNumber(totalAreaSqft,0) +
+    " sqft</strong>.<br><br>" +
+
+    "For the selected " +
+    generationDescription +
+    " application, preliminary generation is approximately <strong>" +
+    formatNumber(dailyGeneration,1) +
+    " units/day</strong>, <strong>" +
+    formatNumber(monthlyGeneration,0) +
+    " units/month</strong> and <strong>" +
+    formatNumber(annualGeneration,0) +
+    " units/year</strong>.<br><br>" +
+
+    pricingText +
+    bosText +
+
+    "<br><br>Final module layout, generation, structure, electrical design and commercial pricing should be confirmed after reviewing project drawings and site conditions.";
 
 }
 
 
-/* AUTO UPDATE */
+/* -----------------------------------------
+   AUTO UPDATE
+----------------------------------------- */
 
 document
-.querySelectorAll(
-  "input,select"
-)
-.forEach(el => {
+.querySelectorAll("input, select")
+.forEach(element => {
 
-  el.addEventListener(
+  element.addEventListener(
     "input",
     calculate
   );
 
-  el.addEventListener(
+  element.addEventListener(
     "change",
     calculate
   );
@@ -1243,37 +1982,41 @@ document
 });
 
 
-/* COPY SUMMARY */
+/* -----------------------------------------
+   COPY CUSTOMER SUMMARY
+----------------------------------------- */
 
 $("copyButton")
-.onclick = function(){
+.addEventListener("click", function(){
 
   const text =
-  $("customerSummary")
-  .innerText;
+  $("customerSummary").innerText;
 
   navigator.clipboard
   .writeText(text)
   .then(() => {
 
-    $("copyButton")
-    .innerText =
+    $("copyButton").innerText =
     "Copied ✓";
 
     setTimeout(() => {
 
-      $("copyButton")
-      .innerText =
+      $("copyButton").innerText =
       "Copy Customer Summary";
 
     },1500);
 
   });
 
-};
+});
 
 
-calculate();
+/* -----------------------------------------
+   START
+----------------------------------------- */
+
+loadProductDefaults();
+updateGenerationUI();
 
 </script>
 
